@@ -1,22 +1,19 @@
 export function createResizeObserverMock() {
-  let callback: ResizeObserverCallback;
+	let callback: ResizeObserverCallback;
 
-  class ResizeObserverMock {
-    constructor(cb: ResizeObserverCallback) {
-      callback = cb;
-    }
+	class ResizeObserverMock {
+		constructor(cb: ResizeObserverCallback) {
+			callback = cb;
+		}
 
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  }
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	}
 
-  function trigger(width: number, height: number) {
-    callback?.(
-      [{ contentRect: { width, height } } as ResizeObserverEntry],
-      {} as ResizeObserver
-    );
-  }
+	function trigger(width: number, height: number) {
+		callback?.([{ contentRect: { width, height } } as ResizeObserverEntry], {} as ResizeObserver);
+	}
 
-  return { ResizeObserverMock, trigger };
+	return { ResizeObserverMock, trigger };
 }

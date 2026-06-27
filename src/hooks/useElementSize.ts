@@ -1,4 +1,11 @@
-import { useEffect, useRef, useState, useLayoutEffect, type Dispatch, type SetStateAction } from 'react';
+import {
+	useEffect,
+	useRef,
+	useState,
+	useLayoutEffect,
+	type Dispatch,
+	type SetStateAction,
+} from 'react';
 
 type Size = {
 	width: number;
@@ -11,38 +18,48 @@ type Size = {
  * The measurement is triggered in two stages: an initial synchronous measure on mount with layout effect and subsequent measures via a ResizeObserver API.
  * Returns an object containing a ref callback to attach to the element and the current width and height of the element.
  */
-export function useElementSize<T extends HTMLElement>(): { ref: Dispatch<SetStateAction<T | null>> } & Size {
-  const [node, setNode] = useState<T | null>(null);
+export function useElementSize<T extends HTMLElement>(): {
+	ref: Dispatch<SetStateAction<T | null>>;
+} & Size {
+	const [node, setNode] = useState<T | null>(null);
 	const [size, setSize] = useState<Size>({ width: 0, height: 0 });
-  const observerRef = useRef<ResizeObserver | null>(null);
+	const observerRef = useRef<ResizeObserver | null>(null);
 
-  // initial synchronous measure (reduces flicker on first render)
-  useLayoutEffect(() => {
-    if (!node) return;
+	// initial synchronous measure (reduces flicker on first render)
+	useLayoutEffect(() => {
+		if (!node) return;
 
-    const rect = node.getBoundingClientRect();
-    setSize({ width: rect.width, height: rect.height });
-  }, [node]);
+		const measure = () => {
+			const rect = node.getBoundingClientRect();
+			setSize((prev) =>
+				prev.width === rect.width && prev.height === rect.height
+					? prev
+					: { width: rect.width, height: rect.height }
+			);
+		};
 
-  // setup observer once
-  useLayoutEffect(() => {
-    observerRef.current = new ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect;
-      setSize(prev =>
-        prev.width === width && prev.height === height ? prev : { width, height }
-      );
-    });
+		measure();
+	}, [node]);
 
-    return () => observerRef.current?.disconnect();
-  }, []);
+	// setup observer once
+	useLayoutEffect(() => {
+		observerRef.current = new ResizeObserver(([entry]) => {
+			const { width, height } = entry.contentRect;
+			setSize((prev) =>
+				prev.width === width && prev.height === height ? prev : { width, height }
+			);
+		});
 
-  // attach/detach observer to the node
-  useEffect(() => {
-    if (!node || !observerRef.current) return;
+		return () => observerRef.current?.disconnect();
+	}, []);
 
-    observerRef.current.observe(node);
-    return () => observerRef.current?.unobserve(node);
-  }, [node]);
+	// attach/detach observer to the node
+	useEffect(() => {
+		if (!node || !observerRef.current) return;
+
+		observerRef.current.observe(node);
+		return () => observerRef.current?.unobserve(node);
+	}, [node]);
 
 	return { ref: setNode, ...size };
 }
