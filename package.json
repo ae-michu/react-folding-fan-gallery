@@ -1,0 +1,57 @@
+{
+  "name": "react-folding-fan-gallery",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "storybook:docs": "STORYBOOK_MODE=docs storybook dev -p 6006",
+    "build-storybook": "STORYBOOK_MODE=docs storybook build",
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "Michał Pękal (https://github.com/ae-michu)",
+  "license": "MIT",
+  "description": "A React component library for a folding fan gallery",
+  "dependencies": {
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@github-ui/storybook-addon-performance-panel": "^1.1.4",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/react-vite": "^10.4.6",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.3",
+    "eslint-plugin-storybook": "^10.4.6",
+    "globals": "^17.7.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.0",
+    "storybook": "^10.4.6",
+    "tsup": "^8.5.1",
+    "typescript": "5.5.4",
+    "typescript-eslint": "^8.62.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
+  }
+}
