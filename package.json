@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "storybook": "storybook dev -p 6006",
     "storybook:docs": "STORYBOOK_MODE=docs storybook dev -p 6006",
     "build-storybook": "STORYBOOK_MODE=docs storybook build",
@@ -28,6 +28,8 @@
     "@github-ui/storybook-addon-performance-panel": "^1.1.4",
     "@storybook/addon-docs": "^10.4.6",
     "@storybook/react-vite": "^10.4.6",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint": "^10.6.0",
@@ -38,12 +40,14 @@
     "eslint-plugin-storybook": "^10.4.6",
     "globals": "^17.7.0",
     "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.0",
     "storybook": "^10.4.6",
     "tsup": "^8.5.1",
     "typescript": "5.5.4",
-    "typescript-eslint": "^8.62.0"
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx}": [
