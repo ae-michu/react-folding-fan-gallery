@@ -1,65 +1,85 @@
 import {
+	useCallback,
 	useEffect,
 	useRef,
 	useState,
-	useLayoutEffect,
-	type Dispatch,
-	type SetStateAction,
+	useSyncExternalStore,
+	type RefCallback,
 } from 'react';
 
-type Size = {
-	width: number;
-	height: number;
-};
+type Size = { width: number; height: number };
+
+type Snapshot = Size & { measured: boolean };
+
+const INITIAL_SNAPSHOT: Snapshot = { width: 0, height: 0, measured: false };
+
+function createElementSizeStore() {
+	let snapshot = INITIAL_SNAPSHOT;
+	const listeners = new Set<() => void>();
+	const emitChange = () => {
+		listeners.forEach((listener) => listener());
+	};
+	return {
+		getSnapshot: () => snapshot,
+		subscribe: (listener: () => void) => {
+			listeners.add(listener);
+			return () => listeners.delete(listener);
+		},
+		setSnapshot: (width: number, height: number) => {
+			if (snapshot.width === width && snapshot.height === height && snapshot.measured) {
+				return;
+			}
+			snapshot = { width, height, measured: true };
+			emitChange();
+		},
+		reset: () => {
+			if (snapshot === INITIAL_SNAPSHOT) {
+				return;
+			}
+			snapshot = INITIAL_SNAPSHOT;
+			emitChange();
+		},
+	};
+}
 
 /**
  * Hook to track the size of an HTML element.
- * Measures the element's width and height and updates whenever the element is resized.
- * The measurement is triggered in two stages: an initial synchronous measure on mount with layout effect and subsequent measures via a ResizeObserver API.
+ * Measures the element's width and height immediately when the ref is attached (during React's commit phase),
+ * then subscribes to future size changes via ResizeObserver.
  * Returns an object containing a ref callback to attach to the element and the current width and height of the element.
  */
 export function useElementSize<T extends HTMLElement>(): {
-	ref: Dispatch<SetStateAction<T | null>>;
+	ref: RefCallback<T>;
+	measured: boolean;
 } & Size {
-	const [node, setNode] = useState<T | null>(null);
-	const [size, setSize] = useState<Size>({ width: 0, height: 0 });
+	const [store] = useState(createElementSizeStore);
 	const observerRef = useRef<ResizeObserver | null>(null);
+	const snapshot = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
 
-	// initial synchronous measure (reduces flicker on first render)
-	useLayoutEffect(() => {
-		if (!node) return;
+	const ref = useCallback<RefCallback<T>>(
+		(node) => {
+			observerRef.current?.disconnect();
+			observerRef.current = null;
 
-		const measure = () => {
+			if (!node) {
+				store.reset();
+				return;
+			}
+
 			const rect = node.getBoundingClientRect();
-			setSize((prev) =>
-				prev.width === rect.width && prev.height === rect.height
-					? prev
-					: { width: rect.width, height: rect.height }
-			);
-		};
+			store.setSnapshot(rect.width, rect.height);
 
-		measure();
-	}, [node]);
+			observerRef.current = new ResizeObserver(([entry]) => {
+				const { width, height } = entry.contentRect;
+				store.setSnapshot(width, height);
+			});
 
-	// setup observer once
-	useLayoutEffect(() => {
-		observerRef.current = new ResizeObserver(([entry]) => {
-			const { width, height } = entry.contentRect;
-			setSize((prev) =>
-				prev.width === width && prev.height === height ? prev : { width, height }
-			);
-		});
+			observerRef.current.observe(node);
+		},
+		[store]
+	);
 
-		return () => observerRef.current?.disconnect();
-	}, []);
+	useEffect(() => () => observerRef.current?.disconnect(), []);
 
-	// attach/detach observer to the node
-	useEffect(() => {
-		if (!node || !observerRef.current) return;
-
-		observerRef.current.observe(node);
-		return () => observerRef.current?.unobserve(node);
-	}, [node]);
-
-	return { ref: setNode, ...size };
+	return { ref, ...snapshot };
 }
