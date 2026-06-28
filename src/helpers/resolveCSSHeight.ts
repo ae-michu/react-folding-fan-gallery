@@ -1,5 +1,12 @@
 export type ResolvableCSSHeight = `${number}px` | `${number}%` | `${number}rem`;
 
+/**
+ * Resolves a CSS height value (in px, %, or rem) to a numeric pixel value.
+ * @param height - The CSS height value to resolve.
+ * @param elementSizePx - The size of the reference element in pixels (used for percentage heights).
+ * @returns The resolved height in pixels.
+ * @throws Will throw an error if the height format is invalid or if a percentage height is provided without a valid reference element size.
+ */
 export const resolveCSSHeight = (height: ResolvableCSSHeight, elementSizePx: number): number => {
 	const ROOT_FONT_SIZE =
 		typeof window !== 'undefined'
