@@ -7,7 +7,7 @@ export type ResolvableCSSHeight = `${number}px` | `${number}%` | `${number}rem`;
  * @returns The resolved height in pixels.
  * @throws Will throw an error if the height format is invalid or if a percentage height is provided without a valid reference element size.
  */
-export const resolveCSSHeight = (height: ResolvableCSSHeight, elementSizePx: number): number => {
+export const resolveCSSSize = (height: ResolvableCSSHeight, elementSizePx: number): number => {
 	const ROOT_FONT_SIZE =
 		typeof window !== 'undefined'
 			? parseFloat(getComputedStyle(document.documentElement).fontSize)

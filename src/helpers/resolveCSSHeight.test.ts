@@ -1,13 +1,13 @@
-import { resolveCSSHeight } from './resolveCSSHeight';
+import { resolveCSSSize } from './resolveCSSSize';
 
-describe('resolveCSSHeight', () => {
+describe('resolveCSSSize', () => {
 	describe('px', () => {
 		it('returns the numeric pixel value', () => {
-			expect(resolveCSSHeight('200px', 0)).toBe(200);
+			expect(resolveCSSSize('200px', 0)).toBe(200);
 		});
 
 		it('handles fractional px values', () => {
-			expect(resolveCSSHeight('10.5px', 0)).toBe(10.5);
+			expect(resolveCSSSize('10.5px', 0)).toBe(10.5);
 		});
 	});
 
@@ -17,7 +17,7 @@ describe('resolveCSSHeight', () => {
 				fontSize: '16px',
 			} as CSSStyleDeclaration);
 
-			expect(resolveCSSHeight('2rem', 0)).toBe(32);
+			expect(resolveCSSSize('2rem', 0)).toBe(32);
 		});
 
 		it('handles fractional rem values', () => {
@@ -25,7 +25,7 @@ describe('resolveCSSHeight', () => {
 				fontSize: '16px',
 			} as CSSStyleDeclaration);
 
-			expect(resolveCSSHeight('1.5rem', 0)).toBe(24);
+			expect(resolveCSSSize('1.5rem', 0)).toBe(24);
 		});
 
 		it('uses a different root font size when set', () => {
@@ -33,21 +33,21 @@ describe('resolveCSSHeight', () => {
 				fontSize: '20px',
 			} as CSSStyleDeclaration);
 
-			expect(resolveCSSHeight('1rem', 0)).toBe(20);
+			expect(resolveCSSSize('1rem', 0)).toBe(20);
 		});
 	});
 
 	describe('%', () => {
 		it('returns a percentage of the element size', () => {
-			expect(resolveCSSHeight('50%', 400)).toBe(200);
+			expect(resolveCSSSize('50%', 400)).toBe(200);
 		});
 
 		it('handles 100%', () => {
-			expect(resolveCSSHeight('100%', 300)).toBe(300);
+			expect(resolveCSSSize('100%', 300)).toBe(300);
 		});
 
 		it('throws when elementSizePx is NaN', () => {
-			expect(() => resolveCSSHeight('50%', NaN)).toThrow(
+			expect(() => resolveCSSSize('50%', NaN)).toThrow(
 				'Cannot resolve percentage height without a reference element size in pixels.'
 			);
 		});
