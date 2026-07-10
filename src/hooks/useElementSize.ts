@@ -47,6 +47,13 @@ function createElementSizeStore() {
  * Measures the element's width and height immediately when the ref is attached (during React's commit phase),
  * then subscribes to future size changes via ResizeObserver.
  * Returns an object containing a ref callback to attach to the element and the current width and height of the element.
+ *
+ * @param T - The type of the HTML element to measure (e.g., HTMLDivElement, HTMLSpanElement).
+ * @returns An object containing:
+ *   - ref: A callback ref to attach to the element to measure.
+ *   - measured: A boolean indicating whether the size has been measured at least once.
+ *   - width: The current width of the element in pixels.
+ *   - height: The current height of the element in pixels.
  */
 export function useElementSize<T extends HTMLElement>(): {
 	ref: RefCallback<T>;
