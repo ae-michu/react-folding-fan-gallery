@@ -1,0 +1,51 @@
+.cardWrapper {
+	/* set transform origin variables */
+	--origin-x: 50%;
+	--origin-y: var(--anchor-height);
+
+	/* calculate x/y position for the card */
+	--circle-radius: calc(var(--circle-diameter) / 2);
+	--circle-alfa: calc(var(--angle-span-degrees) * PI / 180deg);
+	--delta-theta: calc(var(--circle-alfa) / (var(--cards-count) - 1));
+	--circle-origin-x: 50%;
+	--circle-origin-y: calc((var(--card-height) / 2) + var(--circle-radius));
+	--theta-top: calc(PI / 2 * -1);
+	--theta-start: calc(var(--theta-top) - var(--circle-alfa) / 2);
+	--theta-i: calc(var(--theta-start) + (var(--delta-theta) * var(--index)));
+	--xi: calc(var(--circle-origin-x) + (var(--circle-radius) * cos(var(--theta-i))));
+	--xy: calc(var(--circle-origin-y) + (var(--circle-radius) * sin(var(--theta-i))));
+
+	/* calculate rotation (bottom of the card parallel to the center) */
+	--rotation: calc(var(--theta-i) * 180deg / PI + 90deg);
+
+	position: absolute;
+	display: inline-block;
+	cursor: pointer;
+	transform-origin: var(--origin-x) var(--origin-y);
+	left: var(--xi);
+	top: var(--xy);
+	transform: translateX(-50%) translateY(-50%) rotate(var(--rotation)) scale(var(--scale));
+	transition: var(--transition);
+	transition-property: transform, top, left;
+	z-index: var(--z-index);
+}
+
+.overwriteToCenter {
+	--origin-x: 50%;
+	--origin-y: 50%;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.debugAnchorHeight::after {
+	content: '';
+	position: absolute;
+	left: var(--origin-x);
+	top: var(--origin-y);
+	width: 6px;
+	height: 6px;
+	background: purple;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+}

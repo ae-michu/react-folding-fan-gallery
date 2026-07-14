@@ -1,0 +1,17 @@
+.card {
+	position: relative;
+	width: 162px;
+	height: auto;
+	aspect-ratio: 162 / 287;
+	border-radius: 10px;
+	transition: var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
+	filter: drop-shadow(0px 0px 15px rgba(0, 0, 0, 0.5));
+	overflow: hidden;
+}
+
+.image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	pointer-events: none;
+}
