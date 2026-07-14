@@ -1,0 +1,32 @@
+.root {
+	position: relative;
+}
+
+.circle {
+	width: var(--size);
+	aspect-ratio: 1 / 1;
+}
+
+.circleDebug {
+	/* calculate clip height for the debug circle based on the selected spread degrees */
+	--radius: 50%;
+	--theta-top: calc(PI / 2 * -1);
+	--alfa: calc(var(--clip-degrees) * PI / 180);
+	--theta-start: calc(var(--theta-top) - var(--alfa) / 2);
+	--clip-height: calc(var(--radius) + (var(--radius) * sin(var(--theta-start))));
+	position: absolute;
+	top: var(--top);
+	visibility: visible;
+	border: 1px dashed red;
+	border-radius: 50% 50% 50% 50%;
+	left: 50%;
+	transform: translateX(-50%);
+	clip-path: inset(0 0 calc(100% - var(--clip-height)) 0);
+	z-index: 1000;
+}
+
+.cardsContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}

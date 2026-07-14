@@ -1,0 +1,218 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/addon-docs/blocks';
+import * as GalleryStories from './Gallery.stories';
+
+<Meta of={GalleryStories} />
+
+# react-folding-fan-gallery
+
+A React component that arranges cards in an interactive folding-fan arc. Hover or focus any card to bring it to the front — the surrounding cards shift scale and z-order to stay out of the way.
+It's great for photo galleries, product showcases, restaurants or any situation where you want to display a small number of items in a visually appealing way.
+
+<Story of={GalleryStories.FiveCardsDemo} />
+
+## Installation
+
+```sh
+npm install react-folding-fan-gallery
+```
+
+## Basic usage
+You can quickly start with a builtin card element, but it is recommended to create you own (spark the creativity! ✨) and pass it to the `renderer` prop.
+
+```tsx
+import { Gallery, Card } from 'react-folding-fan-gallery';
+
+const photos = [
+  { image: '/img/a.jpg', alt: 'Mountain' },
+  { image: '/img/b.jpg', alt: 'Forest' },
+  { image: '/img/c.jpg', alt: 'Lake' },
+];
+
+// cards.length must be odd
+<Gallery
+  cards={photos}
+  renderer={(item) => ( <Card {...item} /> )}
+/>
+```
+
+> **Requirement:** `cards` must always contain an **odd** number of items so the fan has an unambiguous center card.
+
+## How it works
+
+Cards are placed along an invisible arc defined by a virtual circle. Each card's `left`, `top`, `rotation`, and `scale` are calculated using CSS trigonometry. When a card is hovered or focused, the active card's scale is increased and its z-index is raised above the others, while the surrounding cards are scaled down.
+
+All positional updates bypass React's render cycle: a single `useLayoutEffect` writes CSS custom properties directly onto a shared container `div`, which inherited variables pick up automatically. Individual `CardWrapper` components are wrapped in `React.memo` and only re-render when their active state changes - hover on any card triggers rerender only on that one card.
+
+<Story of={GalleryStories.SevenCardsDemo} />
+
+## Props
+
+<table>
+  <thead>
+    <tr>
+      <th>Prop</th>
+      <th>Type</th>
+      <th>Default</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>cards</code></td>
+      <td><code>T[]</code></td>
+      <td>—</td>
+      <td>
+        Data array for the cards. <strong>Must be an odd length.</strong>
+      </td>
+    </tr>
+    <tr>
+      <td><code>renderer</code></td>
+      <td><code>(item?: T) =&gt; ReactNode</code></td>
+      <td>—</td>
+      <td>
+        Render function called once per card with its data item.
+        See <a href="#renderer">Renderer</a> below.
+      </td>
+    </tr>
+    <tr>
+      <td><code>circleSize</code></td>
+      <td><code>string</code></td>
+      <td><code>'80%'</code></td>
+      <td>
+        Diameter of the virtual positioning circle as any CSS length value
+        (e.g. <code>'80%'</code>, <code>'400px'</code>).
+        Larger values space the cards further apart horizontally.
+      </td>
+    </tr>
+    <tr>
+      <td><code>spreadDegrees</code></td>
+      <td><code>number</code></td>
+      <td><code>80</code></td>
+      <td>
+        Angle in degrees over which the cards are distributed.
+        <code>90</code> fills a quarter-circle arc, <code>180</code> a full
+        semicircle.
+      </td>
+    </tr>
+    <tr>
+      <td><code>anchorHeight</code></td>
+      <td>
+        <code>'px' | '%' | 'rem'</code>
+      </td>
+      <td><code>'10%'</code></td>
+      <td>
+        Distance from the <strong>top edge</strong> of a card to its rotation
+        pivot. See <a href="#anchor-height">Anchor height</a> below.
+      </td>
+    </tr>
+    <tr>
+      <td><code>scaleLow</code></td>
+      <td><code>number</code></td>
+      <td><code>0.8</code></td>
+      <td>
+        Scale factor applied to the outermost inactive cards. Cards between
+        the edge and the active card are interpolated between
+        <code>scaleLow</code> and <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <td><code>scaleHigh</code></td>
+      <td><code>number</code></td>
+      <td><code>1.2</code></td>
+      <td>
+        Scale factor applied to the active (hovered or focused) card.
+      </td>
+    </tr>
+    <tr>
+      <td><code>overflowTop</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>
+        When <code>false</code>, the container adds <code>padding-top</code>
+        to fully contain all card corners that extend above its top edge.
+      </td>
+    </tr>
+    <tr>
+      <td><code>overflowBottom</code></td>
+      <td><code>boolean</code></td>
+      <td><code>true</code></td>
+      <td>
+        When <code>false</code>, the container increases its
+        <code>height</code> to fully contain all card corners that extend
+        below its bottom edge.
+      </td>
+    </tr>
+    <tr>
+      <td><code>debug</code></td>
+      <td><code>boolean</code></td>
+      <td><code>false</code></td>
+      <td>
+        Renders the virtual positioning circle and each card's rotation pivot
+        point. Useful while tuning layout values.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Anchor height
+
+`anchorHeight` controls where on the card the rotation pivot sits. Think of it as the point where an invisible pin holds the card and rotationAngle rotates it.
+
+- **Small value (e.g. `'5%'`)** — the pivot is near the top of the card. Cards fan out from their tops, like playing cards fanned in a hand. The visible gap between cards is narrow at the top.
+- **Larger value (e.g. `'40%'`)** — the pivot is closer to the card's center. Cards spread more evenly and the fan opens further at the top.
+
+You can use `%`, `px`, or `rem` unit for `anchorHeight`.
+
+### Renderer
+
+The `renderer` function is also called **once with `undefined`** during initialization so the gallery can measure the rendered card's dimensions off-screen. Make sure the output has a consistent, data-independent size:
+
+```tsx
+// ✅ Fixed size — measurement is reliable
+renderer={(item) => (
+  <div style={{ width: 120, height: 160 }}>
+    {item?.title}
+  </div>
+)}
+
+// ⚠️ Variable size — measurement may not match actual cards
+renderer={(item) => (
+  <div>{item?.longDescription}</div>
+)}
+```
+
+## Dynamic bounding box
+
+By default (`overflowTop: true`, `overflowBottom: true`) the gallery root container has a fixed height equal to the initial cards layout (top of the center card and lowest corner of the edge card). When cards are active they may overflow the container.
+
+Setting `overflowTop` or `overflowBottom` to `false` triggers a geometric calculation that traces every corner of every card — accounting for its exact position, rotation angle, and scale — and sizes the container to contain them all. This is useful in page layouts where you need the gallery to coexist with surrounding content without overlapping it.
+
+In the examples below the **red border** marks the edge of the gallery root element.
+
+### Bottom only (`overflowBottom: false`)
+
+The container height grows to contain the lowest corner of every card. Cards may still extend above the top edge.
+
+<Story of={GalleryStories.DynamicBoundingBoxBottomDemo} />
+
+### Top only (`overflowTop: false`)
+
+`padding-top` is added so that no card corner extends above the container's top edge. The bottom may still overflow.
+
+<Story of={GalleryStories.DynamicBoundingBoxTopDemo} />
+
+### Top and bottom (`overflowTop: false`, `overflowBottom: false`)
+
+Both constraints are active simultaneously. The container fully wraps every card corner in all directions, regardless of rotation or scale.
+
+<Story of={GalleryStories.DynamicBoundingBoxTopAndBottomDemo} />
+
+## Accessibility
+
+Every card renders as a `role="button"` element with `tabIndex={0}` and `aria-pressed` reflecting its active state. Keyboard users can navigate between cards with `Tab` and activate a card with `Enter` or `Space`, triggering the same hover effect as a mouse.
+
+## Live playground
+
+<Story of={GalleryStories.Playground} />
+
+<Controls of={GalleryStories.Playground} />
