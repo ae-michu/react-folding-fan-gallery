@@ -13,5 +13,11 @@ const config: StorybookConfig = {
 		defaultName: 'Docs',
 		docsMode: mode === 'docs',
 	},
+	async viteFinal(config) {
+		return {
+			...config,
+			base: '/react-folding-fan-gallery/',
+		};
+	},
 };
 export default config;
