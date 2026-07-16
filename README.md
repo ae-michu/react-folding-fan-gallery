@@ -1,6 +1,6 @@
 # react-folding-fan-gallery
 
-![Demo](./demo.gif)
+![Demo](https://raw.githubusercontent.com/ae-michu/react-folding-fan-gallery/main/demo.gif)
 
 A React component that arranges cards in an **interactive folding-fan arc**. Hover or focus any card to bring it to the front — surrounding cards shift scale and z-order to stay out of the way.
 

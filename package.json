@@ -1,14 +1,39 @@
 {
 	"name": "react-folding-fan-gallery",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
 	"files": [
 		"dist"
 	],
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			}
+		},
+		"./style.css": "./dist/index.css"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ae-michu/react-folding-fan-gallery.git"
+	},
+	"homepage": "https://ae-michu.github.io/react-folding-fan-gallery/",
+	"bugs": {
+		"url": "https://github.com/ae-michu/react-folding-fan-gallery/issues"
+	},
 	"scripts": {
 		"prepare": "husky",
+		"prepublishOnly": "npm run build",
 		"test": "vitest",
 		"storybook": "storybook dev -p 6006",
 		"storybook:docs": "STORYBOOK_MODE=docs storybook dev -p 6006",
@@ -16,15 +41,36 @@
 		"build": "tsup src/index.ts --format esm,cjs --dts",
 		"lint": "eslint ."
 	},
-	"keywords": [],
+	"keywords": [
+		"react",
+		"gallery",
+		"typescript",
+		"frontend",
+		"animation",
+		"image-gallery",
+		"react-library",
+		"react-component",
+		"web-components",
+		"carousel",
+		"storybook",
+		"ui-component",
+		"vite",
+		"react-component-library",
+		"folding",
+		"fan",
+		"folding-fan",
+		"folding-fan-gallery"
+	],
 	"author": "Michał Pękal (https://github.com/ae-michu)",
 	"license": "MIT",
 	"description": "A React component library for a folding fan gallery",
-	"dependencies": {
-		"react": "^19.2.7",
-		"react-dom": "^19.2.7"
+	"peerDependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
 	},
 	"devDependencies": {
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
 		"@eslint/js": "^10.0.1",
 		"@github-ui/storybook-addon-performance-panel": "^1.1.4",
 		"@storybook/addon-docs": "^10.4.6",
@@ -59,5 +105,8 @@
 		"*.{json,css,md}": [
 			"prettier --write"
 		]
-	}
+	},
+	"sideEffects": [
+		"**/*.css"
+	]
 }
