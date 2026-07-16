@@ -10,4 +10,7 @@ export default defineConfig({
 	clean: true,
 	treeshake: true,
 	sourcemap: true,
+	loader: {
+		'.css': 'copy',
+	},
 });

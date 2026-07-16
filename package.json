@@ -1,6 +1,6 @@
 {
 	"name": "react-folding-fan-gallery",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
@@ -17,8 +17,7 @@
 				"types": "./dist/index.d.ts",
 				"default": "./dist/index.js"
 			}
-		},
-		"./style.css": "./dist/index.css"
+		}
 	},
 	"publishConfig": {
 		"access": "public"
@@ -69,8 +68,6 @@
 		"react-dom": "^19.0.0"
 	},
 	"devDependencies": {
-		"react": "^19.2.7",
-		"react-dom": "^19.2.7",
 		"@eslint/js": "^10.0.1",
 		"@github-ui/storybook-addon-performance-panel": "^1.1.4",
 		"@storybook/addon-docs": "^10.4.6",
@@ -90,6 +87,8 @@
 		"jsdom": "^29.1.1",
 		"lint-staged": "^16.4.0",
 		"prettier": "^3.9.0",
+		"react": "^19.2.7",
+		"react-dom": "^19.2.7",
 		"storybook": "^10.4.6",
 		"tsup": "^8.5.1",
 		"typescript": "5.5.4",
